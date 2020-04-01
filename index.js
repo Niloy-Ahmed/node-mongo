@@ -24,9 +24,6 @@ app.get('/', (req, res) =>{
     res.send(fruit)
 });
 
-// app.get('/fruits/banana',(req, res) => {
-//     res.send({fruit:'banana', Quantity:1000, price:30000})
-// });
 app.get('/users/:id', (req, res) =>{
     const id = req.params.id;
     const name = users[id];
