@@ -6,47 +6,82 @@
     <title>Mongo</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
-<body>
-    <!-- mongodb+srv://dbUser:<password>@cluster0-bdgwg.mongodb.net/test?retryWrites=true&w=majority -->
+<body> <!-- mongodb+srv://dbUser:<password>@cluster0-bdgwg.mongodb.net/test?retryWrites=true&w=majority -->
     <h1>My Node and MongoDB site</h1>
-    <p id="userName"> </p>
+    <p id="userName"></p>
     <div class="container">
         <div class="row">
             <input type="text" class="form-control" id="name" placeholder="Product Name">
-            <input type="text" class="form-control" id="price" placeholder="price name">
-            <input type="text" class="form-control" id="stock" placeholder="stock name">
-            <button class="btn btn-primary" id= "addProduct">Add product</button>
+            <input type="text" class="form-control" id="price" placeholder="price">
+            <input type="text" class="form-control" id="stock" placeholder="stock">
+            <button class="btn btn-primary" id= "addProduct" >Add Product</button>
         </div>
+        <p style="display: none; color: green;" id="successMassage">
+            <small>Product Added Successfully</small>
+    </p>
+    <ul id="products-list">
+
+    </ul>
     </div>
     <script>
-        fetch('http://localhost:3000/users/0')
+        // get data
+        fetch('http://localhost:3100/products')
         .then(res => res.json())
         .then(data => {
-             document.getElementById('userName').innerText = data.name
-            });
+            displayProducts(data)
+        });
+
+            function displayProducts(data) {
+                const productContainer = document.getElementById("products-list");
+                for (let i = 0; i < data.length; i++) {
+                    const product = data[i];
+                    appendProduct(product , productContainer);
+                }
+            }
+            function appendProduct(product, productContainer){
+            const item = document.createElement('li');
+            item.innerText = `${product.name}:$${product.price}:available:${product.stock}`;
+            productContainer.appendChild(item);
+        }
 
         // Post data to the serve
-        const btnAddUser = document.getElementById("addProduct");
-        btnAddUser.addEventListener("click", () =>{
-            const name = document.getElementById("name").value;
-            const price = document.getElementById("price");
-            const stock = document.getElementById("stock ");
+        const btnAddUser = document.getElementById('addProduct');
+        btnAddUser.addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const stock = document.getElementById('stock').value;
             const product = {name, price, stock};
+            console.log(product);
             // post
-            fetch('http://localhost:3000/addProduct', {
+            fetch('http://localhost:3100/addProduct', {
                 method:"POST",
                 body:JSON.stringify(product),
                 headers: {
-                    "Content-type": "application/json; charset=UTF-8" 
+                    "Content-type": "application/json; charset=UTF-8"
                 }
-
             })
                 .then(res => res.json())
-                .then(data => updateUser(data));
+                .then(data => {
+                    console.log(data);
+                    updateProduct(data)
+                    //clean
+                    document.getElementById("name").value = '';
+                    document.getElementById("price").value = '';
+                    document.getElementById("stock ").value = '';
+
+                    //show success massage
+                    const success =  document.getElementById("successMassage");
+                    success.style.display = 'block';
+                    setTimeout(() =>{
+                        success.style.display ="none";
+                    }, 5000)
+                });
         })
 
-        function updateUser(users) {
-            document.getElementById('userName').innerText = users.name;
+        function updateProduct(product) {
+            const productContainer = document.getElementById("products-list");
+            appendProduct(product , productContainer)
+            document.getElementById('userName').innerText = product.name;
 
         }
     </script>
