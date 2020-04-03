@@ -47,7 +47,7 @@ app.post('/addProduct', (req,res) =>{
     client = new MongoClient(uri, { useNewUrlParser: true });
     client.connect(err => {
         const collection = client.db("onlineStore").collection("products");
-        collection.insertOne(product,(err, result) => {
+        collection.insert(product,(err, result) => {
             if (err) {
                 console.log(err);
                 res.status(500).send({massage:err});
@@ -60,5 +60,5 @@ app.post('/addProduct', (req,res) =>{
       });  
  // console.log('data received', req.body);
 });
-const port = process.env.PROT || 3200;
-app.listen(port, () => console.log('Listening to prot 3100'));
+const port = process.env.PROT || 4700;
+app.listen(port, () => console.log('Listening to prot 4200'));
